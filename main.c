@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/mman.h>
+#include <sys/utsname.h>
 #include <linux/videodev2.h>
 #include <libv4l2.h>
 
@@ -33,12 +34,14 @@ struct buffer {
 static void xioctl(int fh, int request, void *arg)
 {
   int r;
-
+  uint tries = 0;
   do {
     r = v4l2_ioctl(fh, request, arg);
-  } while (r == -1 && ((errno == EINTR) || (errno == EAGAIN)));
+    tries++;
+  } while (r == -1 && ((errno == EINTR) || (errno == EAGAIN)) &&
+  tries < 1000);
 
-  if (r == -1) {
+  if (r == -1 || tries == 1000) {
     fprintf(stderr, "error %d, %s\\n", errno, strerror(errno));
     exit(EXIT_FAILURE);
   }
@@ -58,6 +61,12 @@ int main(int argc, char **argv)
   char                            out_name[256];
   FILE                            *fout;
   struct buffer                   *buffers;
+  struct utsname                   name;
+
+  if(uname(&name))
+    exit(-1);
+  printf("Your %s computer %s OS is %s %s\n",
+         name.machine, name.nodename, name.sysname, name.release);
 
   fd = v4l2_open(dev_name, O_RDWR | O_NONBLOCK, 0);
   if (fd < 0) {
