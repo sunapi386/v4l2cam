@@ -2,10 +2,14 @@
 Publicly available C file to read a V4L2 camera into PPM files.
 
 ## Compile
-You may need to install headers.
+
+On a fresh system, you may need these
 ```bash
-sudo apt install cmake libv4l-dev/stable
+apt install -y cmake make gcc g++ gdb git tree
+apt install -y libv4l-dev/stable
 ```
+
+You may need to install headers.
 
 ```bash
 mkdir build; cd build; cmake ..; make

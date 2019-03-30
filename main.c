@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     perror("Cannot open device");
     exit(EXIT_FAILURE);
   }
-
+  printf("Attempting to capture from %s\n", dev_name);
   CLEAR(fmt);
   fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   fmt.fmt.pix.width       = 640;
@@ -140,15 +140,14 @@ int main(int argc, char **argv)
 
     sprintf(out_name, "out%03d.ppm", i);
     fout = fopen(out_name, "w");
+    printf( "write %ub to %s\n", buf.bytesused, out_name);
     if (!fout) {
       perror("Cannot open image");
       exit(EXIT_FAILURE);
     }
-    fprintf(fout, "P6\\n%d %d 255\\n",
-            fmt.fmt.pix.width, fmt.fmt.pix.height);
+    fprintf(fout, "P6\\n%d %d 255\\n", fmt.fmt.pix.width, fmt.fmt.pix.height);
     fwrite(buffers[buf.index].start, buf.bytesused, 1, fout);
     fclose(fout);
-
     xioctl(fd, VIDIOC_QBUF, &buf);
   }
 
