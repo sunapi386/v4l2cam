@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+project(v4l2cam C)
+set(CMAKE_C_STANDARD 11)
+add_executable(v4l2cam main.c)
+target_link_libraries(v4l2cam v4l2)
